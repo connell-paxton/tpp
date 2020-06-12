@@ -991,7 +991,7 @@ class NcursesVisualizer < TppVisualizer
       elsif @code then
         # padd the text, I doubt they will have more than 99 lines on one page
         @screen.attron(Ncurses::A_REVERSE)
-        @screen.addstr(" " * (2 - (@codeline/10)) + @codeline.to_s +)
+        @screen.addstr(" " * (2 - (@codeline/10)) + @codeline.to_s)
         @screen.attroff(Ncurses::A_REVERSE)
         type_line(" " + l, 10)
       else
