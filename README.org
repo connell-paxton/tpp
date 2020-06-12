@@ -123,6 +123,8 @@ following page-local commands are available:
 
 --begincode: marks the beginning of a framed code example. This has line
     numbers and a border.
+    
+--endcode: marks the end of a code example
 
 --sleep <seconds>: tpp stops for 3 seconds, doing nothing and accepting
     no input.
