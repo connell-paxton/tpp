@@ -1,5 +1,5 @@
 * tpp - text presentation program
-** This Version was forked by me, Connell Paxton, to add the code formatting option
+This Version was forked by me to add the code formatting option
 the original can be found at <https://github.com/cbbrowne/tpp>
 ** What is tpp?
 
