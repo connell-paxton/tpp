@@ -1,5 +1,6 @@
 * tpp - text presentation program
-
+** This Version was forked by me, Connell Paxton, to add the code formatting option
+the original can be found at <https://github.com/cbbrowne/tpp>
 ** What is tpp?
 
 tpp stands for text presentation program and is an ncurses-based
@@ -117,7 +118,11 @@ following page-local commands are available:
     difference between normal output and shell output is that lines that
     start with $,%, or # are printed as if they were typed by a person.
 
+
 --endshelloutput: marks the end of a shell output
+
+--begincode: marks the beginning of a framed code example. This has line
+    numbers and a border.
 
 --sleep <seconds>: tpp stops for 3 seconds, doing nothing and accepting
     no input.
