@@ -994,6 +994,7 @@ class NcursesVisualizer < TppVisualizer
         @screen.addstr(" " * (2 - (@codeline/10)) + @codeline.to_s)
         @screen.attroff(Ncurses::A_REVERSE)
         type_line(" " + l, 10)
+        @codeline += 1
       else
         @screen.addstr(l)
       end
