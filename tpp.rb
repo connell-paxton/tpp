@@ -419,10 +419,14 @@ class TppVisualizer
         do_beginoutput
       when /^--beginshelloutput/
         do_beginshelloutput
+      when /^--begincode/
+        do_begincode
       when /^--endoutput/
         do_endoutput
       when /^--endshelloutput/
         do_endshelloutput
+      when /^--endcode/
+        do_endcode
       when /^--sleep /
         time2sleep = line.sub(/^--sleep /,"")
         do_sleep(time2sleep)
@@ -750,6 +754,16 @@ class NcursesVisualizer < TppVisualizer
     @shelloutput = true
     @cur_line += 1
   end
+  
+  def do_begincode
+    @codeline = 1
+    @code = true
+    @screen.move(@cur_line,@indent)
+    @screen.addstr(".")
+    (@termwidth - @indent*2 - 2).times { @screen.addstr("-") }
+    @screen.addstr(".")
+    @cur_line += 1
+  end
 
   def do_endoutput
     if @output then
@@ -796,6 +810,17 @@ class NcursesVisualizer < TppVisualizer
       (@termwidth - @indent*2 - 2).times { @screen.addstr("-") }
       @screen.addstr("'")
       @shelloutput = false
+      @cur_line += 1
+    end
+  end
+
+  def do_endcode
+    if @code then
+      @screen.move(@cur_line,@indent)
+      @screen.addstr("`")
+      (@termwidth - @indent*2 - 2).times { @screen.addstr("-") }
+      @screen.addstr("'")
+      @code = false
       @cur_line += 1
     end
   end
@@ -893,11 +918,11 @@ class NcursesVisualizer < TppVisualizer
     Ncurses.attron(Ncurses.COLOR_PAIR(num))
   end
 
-  def type_line(l)
+  def type_line(l, maxtime)
     l.each_byte do |x|
       @screen.addstr(x.chr)
       @screen.refresh()
-      r = rand(20)
+      r = rand(maxtime)
       time_to_sleep = (5 + r).to_f / 250;
       # puts "#{time_to_sleep} #{r}"
       Kernel.sleep(time_to_sleep)
@@ -956,17 +981,23 @@ class NcursesVisualizer < TppVisualizer
     lines = split_lines(line,width)
     lines.each do |l|
       @screen.move(@cur_line,@indent)
-      if (@output or @shelloutput) and ! @slideoutput then
+      if (@output or @shelloutput or @code) and ! @slideoutput then
         @screen.addstr("| ")
       end
       if @shelloutput and (l =~ /^\$/ or l=~ /^%/ or l =~ /^#/) then # allow sh and csh style prompts
-        type_line(l)
+        type_line(l, 20)
       elsif @slideoutput then
         slide_text(l)
+      elsif @code then
+        # padd the text, I doubt they will have more than 99 lines on one page
+        @screen.attron(Ncurses::A_REVERSE)
+        @screen.addstr(" " * (2 - (@codeline/10)) + @codeline.to_s +)
+        @screen.attroff(Ncurses::A_REVERSE)
+        type_line(" " + l, 10)
       else
         @screen.addstr(l)
       end
-      if (@output or @shelloutput) and ! @slideoutput then
+      if (@output or @shelloutput or @code) and ! @slideoutput then
         @screen.move(@cur_line,@termwidth - @indent - 2)
         @screen.addstr(" |")
       end
